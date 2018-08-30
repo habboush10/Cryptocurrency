@@ -12,21 +12,31 @@ class App extends Component {
     addressFrom: ''
   };
   componentDidMount() {
-    const owner =  "FILL_ME_IN";        // change this line with your current address;
+    const owner =  "0x2150D02dCb0215b7EcF37413B7CF9c656a65EB6D";// change this line with your current address;
     
     this.setState({ owner });
   }
 
   getTokens = async event => {
     event.preventDefault();
-    const accounts = await // your code here;
+    const accounts = await // your code here; 
+    web3.eth.getAccounts();
+
     this.setState({ message: 'Waiting on transaction success...' });
     await // your code here;
+    token.methods.getTokens().send({
+      from: accounts[0],
+      value: web3.utils.toWei(this.state.value, 'ether')
+    });
+
+
     this.setState({ message: 'You got your tokens!' });
   };
   tokenBalance = async event => { 
     event.preventDefault();
     const accounts = await // your code here;
+    web3.eth.getAccounts();
+
     console.log(typeof accounts[0],  accounts[0]);
     this.setState({ message: 'Waiting on transaction success...' });
     let result = await // your code here;
@@ -36,29 +46,51 @@ console.log(result)
   transfer = async event => {
     event.preventDefault();
     const accounts = await // your code here;
+    web3.eth.getAccounts();
+
+    token.methods.balances(this.state.address).call({
+      from: accounts[0]
+    });
+
     this.setState({ message: 'Waiting on transaction success...' });
      await // your code here;
+     await token.methods.transfer(this.state.address,this.state.value).send({
+      from: accounts[0]
+    });
+
     this.setState({ message: "transaction has been entered" });
   };
   transferFrom = async event => {
     event.preventDefault();
     const accounts = await // your code here;
+    web3.eth.getAccounts();
     this.setState({ message: 'Waiting on transaction success...' });
      await // your code here;
+     token.methods.approve(this.state.address,this.state.value).send({
+      from: accounts[0]
+    });
     this.setState({ message: "transaction has been entered" });
   };
   approve = async event => {
     event.preventDefault();
     const accounts = await // your code here;
+    web3.eth.getAccounts();
     this.setState({ message: 'Waiting on transaction success...' });
      await // your code here;
+     token.methods.approve(this.state.address,this.state.value).send({
+      from: accounts[0]
+    });
     this.setState({ message: "transaction has been entered" });
   };
   getEthers= async event => {
    event.preventDefault();
    const accounts = await // your code here;
+   web3.eth.getAccounts();
    this.setState({ message: 'Waiting on transaction success...' });
    await // your code here;
+   token.methods.getEthers(this.state.value).send({
+    from: accounts[0]
+  });
    this.setState({ message: 'You sold your tokens!' });
   };
 
@@ -69,6 +101,8 @@ console.log(result)
         <p>
           This token is owned by {this.state.owner}.
         </p>
+        <hr />
+        <p> Transaction status : {this.state.message}</p>
         <hr />
         <form onSubmit={this.getTokens}>
           <h4>Buy Tokens</h4>
@@ -166,9 +200,7 @@ console.log(result)
          </div>
          <button>sell Tokens</button>
        </form>
-       <hr />
-        <h1> Transaction status : {this.state.message}</h1>
-        <hr />
+       
 
       </div>
     );
